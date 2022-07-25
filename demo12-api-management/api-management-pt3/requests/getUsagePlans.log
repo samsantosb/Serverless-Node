@@ -1,0 +1,50 @@
+{
+  "items": [
+    {
+      "id": "hb238x",
+      "name": "api-management-free-dev",
+      "description": "Usage plan \"free\" for api-management dev stage",
+      "apiStages": [
+        {
+          "apiId": "19sr45haxd",
+          "stage": "dev"
+        }
+      ],
+      "throttle": {
+        "burstLimit": 200,
+        "rateLimit": 200
+      },
+      "quota": {
+        "limit": 5,
+        "offset": 0,
+        "period": "MONTH"
+      },
+      "tags": {
+        "STAGE": "dev"
+      }
+    },
+    {
+      "id": "pl357t",
+      "name": "api-management-paid-dev",
+      "description": "Usage plan \"paid\" for api-management dev stage",
+      "apiStages": [
+        {
+          "apiId": "19sr45haxd",
+          "stage": "dev"
+        }
+      ],
+      "throttle": {
+        "burstLimit": 400,
+        "rateLimit": 50
+      },
+      "quota": {
+        "limit": 1000,
+        "offset": 0,
+        "period": "DAY"
+      },
+      "tags": {
+        "STAGE": "dev"
+      }
+    }
+  ]
+}

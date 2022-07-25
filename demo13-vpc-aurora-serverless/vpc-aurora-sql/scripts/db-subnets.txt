@@ -1,0 +1,55 @@
+{
+    "DBSubnetGroups": [
+        {
+            "DBSubnetGroupName": "default",
+            "DBSubnetGroupDescription": "default",
+            "VpcId": "vpc-063b3f7c",
+            "SubnetGroupStatus": "Complete",
+            "Subnets": [
+                {
+                    "SubnetIdentifier": "subnet-cad33bac",
+                    "SubnetAvailabilityZone": {
+                        "Name": "us-east-1a"
+                    },
+                    "SubnetStatus": "Active"
+                },
+                {
+                    "SubnetIdentifier": "subnet-8f4abfd0",
+                    "SubnetAvailabilityZone": {
+                        "Name": "us-east-1d"
+                    },
+                    "SubnetStatus": "Active"
+                },
+                {
+                    "SubnetIdentifier": "subnet-184f7026",
+                    "SubnetAvailabilityZone": {
+                        "Name": "us-east-1e"
+                    },
+                    "SubnetStatus": "Active"
+                },
+                {
+                    "SubnetIdentifier": "subnet-34298b3a",
+                    "SubnetAvailabilityZone": {
+                        "Name": "us-east-1f"
+                    },
+                    "SubnetStatus": "Active"
+                },
+                {
+                    "SubnetIdentifier": "subnet-23fd466e",
+                    "SubnetAvailabilityZone": {
+                        "Name": "us-east-1c"
+                    },
+                    "SubnetStatus": "Active"
+                },
+                {
+                    "SubnetIdentifier": "subnet-819563a0",
+                    "SubnetAvailabilityZone": {
+                        "Name": "us-east-1b"
+                    },
+                    "SubnetStatus": "Active"
+                }
+            ],
+            "DBSubnetGroupArn": "arn:aws:rds:us-east-1:201807860611:subgrp:default"
+        }
+    ]
+}

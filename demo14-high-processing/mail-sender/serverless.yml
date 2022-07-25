@@ -1,0 +1,49 @@
+
+service: mailsender
+provider:
+  name: aws
+  runtime: nodejs12.x
+  environment:
+    BUCKET_SURVEYS: ${ssm:/prod/curso-serverless01/BUCKET_SURVEYS}
+    BUCKET_REPORTS: ${ssm:/prod/curso-serverless01/BUCKET_REPORTS}
+    SES_EMAIL_FROM: ${ssm:/prod/curso-serverless01/SES_EMAIL_FROM}
+    SES_EMAIL_TO: ${ssm:/prod/curso-serverless01/SES_EMAIL_TO}
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - ses:SendRawEmail
+      Resource: "*"
+      Condition:
+        StringEquals:
+          ses:FromAddress:
+            - ${self:provider.environment.SES_EMAIL_FROM}
+
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+      Resource: 
+        - "arn:aws:s3:::${self:custom.bucket}/${self:custom.bucketPrefix}"
+        - "arn:aws:s3:::${self:custom.bucket}/${self:custom.bucketPrefix}/*"
+
+package:
+  excludeDevDependencies: true
+custom:
+  bucket: ${self:provider.environment.BUCKET_SURVEYS}
+  bucketPrefix: ${self:provider.environment.BUCKET_REPORTS}
+
+functions:
+  mailsender:
+    handler: index.hello
+    events:
+      - s3: 
+          existing: true
+          bucket: ${self:custom.bucket}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: ${self:custom.bucketPrefix}/
+            - suffix: .xlsx
+ 
+    
+    
+    

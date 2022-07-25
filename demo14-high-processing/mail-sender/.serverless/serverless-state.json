@@ -1,0 +1,508 @@
+{
+  "service": {
+    "service": "mailsender",
+    "serviceObject": {
+      "name": "mailsender"
+    },
+    "provider": {
+      "stage": "dev",
+      "variableSyntax": "\\${([^{}]+?)}",
+      "name": "aws",
+      "runtime": "nodejs12.x",
+      "environment": {
+        "BUCKET_SURVEYS": "surveys-erick-001",
+        "BUCKET_REPORTS": "reports",
+        "SES_EMAIL_FROM": "ew.treinamentos01@gmail.com",
+        "SES_EMAIL_TO": "ew.treinamentos01@gmail.com"
+      },
+      "iamRoleStatements": [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "ses:SendRawEmail"
+          ],
+          "Resource": "*",
+          "Condition": {
+            "StringEquals": {
+              "ses:FromAddress": [
+                "ew.treinamentos01@gmail.com"
+              ]
+            }
+          }
+        },
+        {
+          "Effect": "Allow",
+          "Action": [
+            "s3:GetObject"
+          ],
+          "Resource": [
+            "arn:aws:s3:::surveys-erick-001/reports",
+            "arn:aws:s3:::surveys-erick-001/reports/*"
+          ]
+        }
+      ],
+      "region": "us-east-1",
+      "versionFunctions": true,
+      "remoteFunctionData": null,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketEncryption": {
+                "ServerSideEncryptionConfiguration": [
+                  {
+                    "ServerSideEncryptionByDefault": {
+                      "SSEAlgorithm": "AES256"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "ServerlessDeploymentBucketPolicy": {
+            "Type": "AWS::S3::BucketPolicy",
+            "Properties": {
+              "Bucket": {
+                "Ref": "ServerlessDeploymentBucket"
+              },
+              "PolicyDocument": {
+                "Statement": [
+                  {
+                    "Action": "s3:*",
+                    "Effect": "Deny",
+                    "Principal": "*",
+                    "Resource": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":s3:::",
+                            {
+                              "Ref": "ServerlessDeploymentBucket"
+                            },
+                            "/*"
+                          ]
+                        ]
+                      }
+                    ],
+                    "Condition": {
+                      "Bool": {
+                        "aws:SecureTransport": false
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "MailsenderLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/mailsender-dev-mailsender"
+            }
+          },
+          "IamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "mailsender-dev",
+                        "lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogStream",
+                          "logs:CreateLogGroup"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/mailsender-dev*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/mailsender-dev*:*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iamRoleStatements\"][0]"
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iamRoleStatements\"][1]"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "mailsender-dev",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    "lambdaRole"
+                  ]
+                ]
+              }
+            }
+          },
+          "MailsenderLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/mailsender/dev/1588637324437-2020-05-05T00:08:44.437Z/mailsender.zip"
+              },
+              "FunctionName": "mailsender-dev-mailsender",
+              "Handler": "index.hello",
+              "MemorySize": 1024,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "Runtime": "nodejs12.x",
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "BUCKET_SURVEYS": "surveys-erick-001",
+                  "BUCKET_REPORTS": "reports",
+                  "SES_EMAIL_FROM": "ew.treinamentos01@gmail.com",
+                  "SES_EMAIL_TO": "ew.treinamentos01@gmail.com"
+                }
+              }
+            },
+            "DependsOn": [
+              "MailsenderLogGroup",
+              "IamRoleLambdaExecution"
+            ]
+          },
+          "MailsenderLambdaVersionwBVkigE6uTcXahKiyyfYuryLjl5BjyiGarjGNsqk": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "MailsenderLambdaFunction"
+              },
+              "CodeSha256": "IDNtXLsjE8cjzKwnaEykkWRPYvJflXnP1eZSn//+AUs="
+            }
+          },
+          "MailsenderCustomS31": {
+            "Type": "Custom::S3",
+            "Version": 1,
+            "DependsOn": [
+              "MailsenderLambdaFunction",
+              "CustomDashresourceDashexistingDashs3LambdaFunction"
+            ],
+            "Properties": {
+              "ServiceToken": {
+                "Fn::GetAtt": [
+                  "CustomDashresourceDashexistingDashs3LambdaFunction",
+                  "Arn"
+                ]
+              },
+              "FunctionName": "mailsender-dev-mailsender",
+              "BucketName": "surveys-erick-001",
+              "BucketConfigs": [
+                {
+                  "Event": "s3:ObjectCreated:*",
+                  "Rules": [
+                    {
+                      "Prefix": "reports/"
+                    },
+                    {
+                      "Suffix": ".xlsx"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "IamRoleCustomResourcesLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "dev",
+                        "mailsender",
+                        "custom-resources-lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Resource": {
+                          "Fn::Join": [
+                            ":",
+                            [
+                              "arn",
+                              {
+                                "Ref": "AWS::Partition"
+                              },
+                              "s3",
+                              "",
+                              "",
+                              "surveys-erick-001"
+                            ]
+                          ]
+                        },
+                        "Action": [
+                          "s3:PutBucketNotification",
+                          "s3:GetBucketNotification"
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Resource": {
+                          "Fn::Join": [
+                            ":",
+                            [
+                              "arn",
+                              {
+                                "Ref": "AWS::Partition"
+                              },
+                              "lambda",
+                              {
+                                "Ref": "AWS::Region"
+                              },
+                              {
+                                "Ref": "AWS::AccountId"
+                              },
+                              "function",
+                              "mailsender-dev-mailsender"
+                            ]
+                          ]
+                        },
+                        "Action": [
+                          "lambda:AddPermission",
+                          "lambda:RemovePermission"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "CustomDashresourceDashexistingDashs3LambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/mailsender/dev/1588637324437-2020-05-05T00:08:44.437Z/custom-resources.zip"
+              },
+              "FunctionName": "mailsender-dev-custom-resource-existing-s3",
+              "Handler": "s3/handler.handler",
+              "MemorySize": 1024,
+              "Runtime": "nodejs12.x",
+              "Timeout": 180,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleCustomResourcesLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "IamRoleCustomResourcesLambdaExecution"
+            ]
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            }
+          },
+          "MailsenderLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "MailsenderLambdaVersionwBVkigE6uTcXahKiyyfYuryLjl5BjyiGarjGNsqk"
+            }
+          }
+        }
+      },
+      "coreCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketEncryption": {
+                "ServerSideEncryptionConfiguration": [
+                  {
+                    "ServerSideEncryptionByDefault": {
+                      "SSEAlgorithm": "AES256"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "ServerlessDeploymentBucketPolicy": {
+            "Type": "AWS::S3::BucketPolicy",
+            "Properties": {
+              "Bucket": {
+                "Ref": "ServerlessDeploymentBucket"
+              },
+              "PolicyDocument": {
+                "Statement": [
+                  {
+                    "Action": "s3:*",
+                    "Effect": "Deny",
+                    "Principal": "*",
+                    "Resource": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":s3:::",
+                            {
+                              "Ref": "ServerlessDeploymentBucket"
+                            },
+                            "/*"
+                          ]
+                        ]
+                      }
+                    ],
+                    "Condition": {
+                      "Bool": {
+                        "aws:SecureTransport": false
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            }
+          }
+        }
+      },
+      "vpc": {}
+    },
+    "custom": {
+      "bucket": "surveys-erick-001",
+      "bucketPrefix": "reports"
+    },
+    "pluginsData": {},
+    "functions": {
+      "mailsender": {
+        "handler": "index.hello",
+        "events": [
+          {
+            "s3": {
+              "existing": true,
+              "bucket": "surveys-erick-001",
+              "event": "s3:ObjectCreated:*",
+              "rules": [
+                {
+                  "prefix": "reports/"
+                },
+                {
+                  "suffix": ".xlsx"
+                }
+              ]
+            }
+          }
+        ],
+        "name": "mailsender-dev-mailsender",
+        "package": {},
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "nodejs12.x",
+        "vpc": {},
+        "versionLogicalId": "MailsenderLambdaVersionwBVkigE6uTcXahKiyyfYuryLjl5BjyiGarjGNsqk"
+      }
+    },
+    "serviceFilename": "serverless.yml",
+    "layers": {},
+    "isDashboardMonitoringPreconfigured": false,
+    "artifact": "/Users/erickwendel/Desktop/estudos-sls/demo14-high-processing/mail-sender/.serverless/mailsender.zip"
+  },
+  "package": {
+    "artifactDirectoryName": "serverless/mailsender/dev/1588637324437-2020-05-05T00:08:44.437Z",
+    "artifact": "mailsender.zip"
+  }
+}

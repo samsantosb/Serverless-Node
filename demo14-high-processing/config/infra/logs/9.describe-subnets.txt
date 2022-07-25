@@ -1,0 +1,8 @@
+[
+    "subnet-819563a0",
+    "subnet-23fd466e",
+    "subnet-34298b3a",
+    "subnet-184f7026",
+    "subnet-8f4abfd0",
+    "subnet-cad33bac"
+]

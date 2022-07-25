@@ -1,0 +1,19 @@
+{
+  "name": "trigger-dynamo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "dependencies": {
+    "aws-sdk": "^2.648.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "invoke-local": "sls invoke local -f hero-insert --path requests-mock/hero.insert.json",
+    "invoke": "sls invoke  -f hero-insert --path requests-mock/hero.insert.json",
+    "invoke-trigger": "sls invoke local -f hero-trigger --path requests-mock/hero.trigger.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

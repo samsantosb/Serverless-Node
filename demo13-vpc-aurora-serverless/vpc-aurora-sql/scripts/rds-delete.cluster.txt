@@ -1,0 +1,54 @@
+{
+    "DBCluster": {
+        "AllocatedStorage": 1,
+        "AvailabilityZones": [
+            "us-east-1b",
+            "us-east-1e",
+            "us-east-1c"
+        ],
+        "BackupRetentionPeriod": 1,
+        "DBClusterIdentifier": "serverlesscourse",
+        "DBClusterParameterGroup": "default.aurora5.6",
+        "DBSubnetGroup": "default",
+        "Status": "available",
+        "EarliestRestorableTime": "2020-04-25T01:18:12.430Z",
+        "Endpoint": "serverlesscourse.cluster-cooryihfsv6h.us-east-1.rds.amazonaws.com",
+        "MultiAZ": false,
+        "Engine": "aurora",
+        "EngineVersion": "5.6.10a",
+        "LatestRestorableTime": "2020-04-25T01:49:53.779Z",
+        "Port": 3306,
+        "MasterUsername": "erickwendel",
+        "PreferredBackupWindow": "06:09-06:39",
+        "PreferredMaintenanceWindow": "sat:07:08-sat:07:38",
+        "ReadReplicaIdentifiers": [],
+        "DBClusterMembers": [],
+        "VpcSecurityGroups": [
+            {
+                "VpcSecurityGroupId": "sg-724de85d",
+                "Status": "active"
+            }
+        ],
+        "HostedZoneId": "Z2R2ITUGPM61AM",
+        "StorageEncrypted": true,
+        "KmsKeyId": "arn:aws:kms:us-east-1:201807860611:key/3e49e009-2e4d-443f-b66d-3533da2a6ca5",
+        "DbClusterResourceId": "cluster-A75U3K2QE4OGL3J3MPLV2TWTRI",
+        "DBClusterArn": "arn:aws:rds:us-east-1:201807860611:cluster:serverlesscourse",
+        "AssociatedRoles": [],
+        "IAMDatabaseAuthenticationEnabled": false,
+        "ClusterCreateTime": "2020-04-25T01:17:25.004Z",
+        "Capacity": 2,
+        "EngineMode": "serverless",
+        "ScalingConfigurationInfo": {
+            "MinCapacity": 2,
+            "MaxCapacity": 4,
+            "AutoPause": false,
+            "SecondsUntilAutoPause": 300,
+            "TimeoutAction": "ForceApplyCapacityChange"
+        },
+        "DeletionProtection": false,
+        "HttpEndpointEnabled": false,
+        "CopyTagsToSnapshot": false,
+        "CrossAccountClone": false
+    }
+}
